@@ -16,5 +16,9 @@ describe('API PetStore Swagger - Entidade Pet', () => {
 
         // Funcoes de Teste em Si
     })
-    
+
+    it('GET Pet', () => {
+        
+    })
+
 })
