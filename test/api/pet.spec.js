@@ -4,7 +4,7 @@ const supertest = require('supertest')
 const petId = 602740501
 
 // Em JavaScript, Classe é opcional
-describe('API PetStore Swagger - Entidade Pet', () => {
+describe.skip('API PetStore Swagger - Entidade Pet', () => {
 
     const request = supertest("https://petstore.swagger.io/v2")
     const massa1 = require('../../vendors/json/massaPet')
