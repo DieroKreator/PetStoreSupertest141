@@ -100,7 +100,68 @@ describe('API PetStore Swagger - Entidade Pet', () => {
     })
 
     // Testes Data Driven do CRUD (POST, GET, PUT e Delete)
+    massa1.array.forEach(({ nomePet, idPet, nomeCategoria, idCategoria}) => {
+        it(`POST Pet Data Driven ForEach - ${nomePet}`, () => {
+            const pet = require('../../vendors/json/pet.json')
 
-    
+            pet.id = idPet
+            pet.name = nomePet
+            pet.category.id = idCategoria
+            pet.category.name = nomeCategoria
+
+            return request
+                .post('/pet')
+                .send(pet)
+                .then((res) => {
+                    expect(res.statusCode).toBe(200)
+                    expect(res.body.id).toBe(idPet)
+                    expect(res.body.name).toBe(nomePet)
+                    expect(res.body.category.name).toBe(nomeCategoria)
+                    expect(res.body.tags[0].name).toBe('vaccinated')
+                })
+        })
+
+        it(`GET Pet Data Driven ForEach - ${nomePet}`, () => {
+
+            return request
+                // .get('/pet/' + petId') // tradicional
+                .get(`/pet/${idPet}`) // moderno: template literals
+                .then((res) => {
+                    expect(res.statusCode).toBe(200)
+                    expect(res.body.id).toBe(idPet)
+                    expect(res.body.status).toBe('available')
+                })
+        })
+
+        it(`PUT Pet Data Driven ForEach - ${nomePet}`, () => {
+
+            const pet = require('../../vendors/json/petput.json')
+
+            pet.id = idPet
+            pet.name = nomePet
+            pet.category.id = idCategoria
+            pet.category.name = nomeCategoria
+
+            return request
+                .put('/pet')
+                .send(pet)
+                .then((res) => {
+                    expect(res.statusCode).toEqual(200)
+                    expect(res.body.status).toEqual('sold')
+                })
+        })
+
+        it(`DELETE Pet Data Driven ForEach - ${nomePet}`, async () => {
+
+            return await request
+                .delete(`/pet/${idPet}`) // moderno: template literals
+                .then((res) => {
+                    expect(res.statusCode).toEqual(200)
+                    expect(res.body.code).toEqual(200)
+                    expect(res.body.message).toBe(idPet.toString())
+                })
+            
+        })
+    })
 
 })
