@@ -5,11 +5,11 @@ const userName = "dico"
 describe('API PetStore Swagger - Entidade User', () => {
 
     const request = supertest("https://petstore.swagger.io/v2")
+    const massaUsers = require('../../vendors/json/massaUser')
 
     it('POST Pet', async () => {
         const user = await require('../../vendors/json/user.json')
 
-        // Funcoes de Teste em Si
         return await request
             .post('/user')
             .send(user)
@@ -43,7 +43,6 @@ describe('API PetStore Swagger - Entidade User', () => {
     it('PUT Pet', async () => {
         const user = await require('../../vendors/json/userput.json')
 
-        // Funcoes de Teste em Si
         return await request
             .put(`/user/${userName}`)
             .send(user)
@@ -67,6 +66,49 @@ describe('API PetStore Swagger - Entidade User', () => {
                 expect(res.body.message).toBe(userName)
             })
         
+    })
+
+    it.each(massaUsers.array.map(elemento => [
+        elemento.idUsuario,
+        elemento.apelido,
+        elemento.nome,
+        elemento.telephone
+    ]))
+    ('POST Usuario Data Driven Simples: %s', (idUsuario, apelido, nome, telephone) => {
+        
+        const user = require('../../vendors/json/user.json')
+
+        user.id = idUsuario
+        user.username = apelido
+        user.firstName = nome
+        user.phone = telephone
+
+        return request
+            .post('/user')
+            .send(user)
+            .then((res) => {
+                expect(res.statusCode).toBe(200)
+                expect(res.body.code).toBe(200)
+                expect(res.body.type).toBe('unknown')
+                expect(res.body.message).toBe(idUsuario.toString())
+            })
+
+    })    
+
+    massaUsers.array.forEach(({ apelido }) => {
+        
+        it(`DELETE User Data Driven ForEach - ${apelido}`, async () => {
+
+            return await request
+                .delete(`/user/${apelido}`)
+                .then((res) => {
+                    expect(res.statusCode).toEqual(200)
+                    expect(res.body.code).toEqual(200)
+                    expect(res.body.type).toBe('unknown')
+                    expect(res.body.message).toBe(apelido)
+                })
+            
+        })
     })
 
 })
